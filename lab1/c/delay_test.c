@@ -41,22 +41,29 @@ int main(int argc, char** argv) {
   if (world_rank == 0) {
     message = 'a';
     MPI_Barrier(MPI_COMM_WORLD);
+	start = MPI_Wtime();
     for(i=0;i<numOfCom;i++){
 	    if(mode==BUFFERED_MODE){
           MPI_Bsend(&message, 1, MPI_CHAR, 1, 0, MPI_COMM_WORLD);
 	    } else {
 		  MPI_Ssend(&message, 1, MPI_CHAR, 1, 0, MPI_COMM_WORLD);
 		}
+		MPI_Recv(&message, 1, MPI_CHAR, 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     }
+	end = MPI_Wtime();
+    printf("Process 1 received message %c from process 0\n", message);
+    printf("Time elapsed: %f\n", (end - start)*1000/(numOfCom*2));
   } else if (world_rank == 1) {
     MPI_Barrier(MPI_COMM_WORLD);
-    start = MPI_Wtime();
+
     for(i=0;i<numOfCom;i++){
       MPI_Recv(&message, 1, MPI_CHAR, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+	  if(mode==BUFFERED_MODE){
+          MPI_Bsend(&message, 1, MPI_CHAR, 0, 0, MPI_COMM_WORLD);
+	    } else {
+		  MPI_Ssend(&message, 1, MPI_CHAR, 0, 0, MPI_COMM_WORLD);
+       }
     }
-    end = MPI_Wtime();
-    printf("Process 1 received message %c from process 0\n", message);
-    printf("Time elapsed: %f\n", (end - start)*1000/numOfCom);
   }
   MPI_Finalize();
 }

@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define BUFFSIZE 2000
+#define BUFFSIZE 9000000
 #define BUFFERED_MODE 1
 #define SYNCHRONISED_MODE 2
 int main(int argc, char** argv) {
@@ -17,8 +17,6 @@ int main(int argc, char** argv) {
   int maxMsgSize=20;
   int mode=SYNCHRONISED_MODE;
 
-  char msgBuf[maxMsgSize];
-
   double start=0;
   double end=0;
 
@@ -32,6 +30,8 @@ int main(int argc, char** argv) {
 	maxMsgSize = atoi(argv[2]);
 	mode = atoi(argv[3]);
   }
+  
+  char msgBuf[maxMsgSize];
   
   if(mode==BUFFERED_MODE){
     MPI_Buffer_attach(buffer,BUFFSIZE);
@@ -49,9 +49,9 @@ int main(int argc, char** argv) {
       MPI_Barrier(MPI_COMM_WORLD);
       for(i=0;i<numOfCom;i++){
 		if(mode==BUFFERED_MODE){
-          MPI_Bsend(msgBuf, 1, MPI_CHAR, 1, 0, MPI_COMM_WORLD);
+          MPI_Bsend(msgBuf, j, MPI_CHAR, 1, 0, MPI_COMM_WORLD);
 	    } else {
-		  MPI_Ssend(msgBuf, 1, MPI_CHAR, 1, 0, MPI_COMM_WORLD);
+		  MPI_Ssend(msgBuf, j, MPI_CHAR, 1, 0, MPI_COMM_WORLD);
 		}
       }
     }
