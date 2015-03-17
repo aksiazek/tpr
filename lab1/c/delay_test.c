@@ -21,9 +21,10 @@ int main(int argc, char** argv) {
 
     int i=0;
 
-    if ( (argc != 3) && (world_rank == 0))
+    if (argc != 3)
     {
-        printf( "usage: %s times_to_send communication_mode\nUsing defaults: %d %d\n", argv[0],numOfCom, mode );
+        if (world_rank == 0)
+                printf( "usage: %s times_to_send communication_mode\nUsing defaults: %d %d\n", argv[0],numOfCom, mode );
     } else {
         numOfCom = atoi(argv[1]);
         mode = atoi(argv[2]);
@@ -54,7 +55,7 @@ int main(int argc, char** argv) {
         }
         end = MPI_Wtime();
         //printf("Process 1 received message %c from process 0\n", message);
-        printf("Time elapsed: %f\n [ms]", (end - start)*1000/(numOfCom*2));
+        printf("Time elapsed: %f [ms]\n", (end - start)*1000/(numOfCom*2));
     } else if (world_rank == 1) {
         MPI_Barrier(MPI_COMM_WORLD);
 

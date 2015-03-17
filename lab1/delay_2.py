@@ -37,12 +37,13 @@ def ping_pong(number_of_messages):
 			receive_message(0)
 			send_message(0)	
 
-if len(sys.argv) < 2 and rank == 1:
-	print 'Usage ./delay <std|sync|buff>'
-	sys.exit(1)
-
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
+
+if len(sys.argv) < 2:
+	if rank == 1:
+	        print 'Usage ./delay <std|sync|buff>'
+	sys.exit(1)
 
 type = sys.argv[1]
 
