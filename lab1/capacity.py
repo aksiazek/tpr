@@ -41,7 +41,7 @@ rank = comm.Get_rank()
 
 results = []
 
-for message_size in [2 ** x for x in range(3, 21)]:
+for message_size in [2 ** x for x in xrange(3, 21)]:
 	if type == 'buff':
 		mpi_buffer = numpy.arange(20000000, dtype='int8')
 		MPI.Attach_buffer(mpi_buffer)
@@ -52,7 +52,7 @@ for message_size in [2 ** x for x in range(3, 21)]:
 	
 	transfered_data = 0
 	if rank == 0:
-		for _ in range(0, number_of_messages):
+		for _ in xrange(0, number_of_messages):
 			if type == 'sync':
 				send_message_sync()
 			elif type =='buff':
@@ -61,7 +61,7 @@ for message_size in [2 ** x for x in range(3, 21)]:
 				send_message_std()
 	elif rank == 1:
 		start_time = MPI.Wtime()
-		for _ in range(0, number_of_messages):
+		for _ in xrange(0, number_of_messages):
 			receive_messages()
 			transfered_data = transfered_data + message_size
 
@@ -76,4 +76,8 @@ for message_size in [2 ** x for x in range(3, 21)]:
 		MPI.Detach_buffer()
 		
 if rank == 1:
-	print results
+	for res in results:
+                print res
+
+MPI.Finalize()
+

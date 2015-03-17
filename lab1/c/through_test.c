@@ -5,8 +5,9 @@
 #define BUFFSIZE 9000000
 #define BUFFERED_MODE 1
 #define SYNCHRONISED_MODE 2
+#define BITS_IN_MBIT 1000000
 int main(int argc, char** argv) {
-    MPI_Init(NULL, NULL);
+    MPI_Init(&argc, &argv);
     char buffer[BUFFSIZE];
     int world_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
@@ -14,7 +15,7 @@ int main(int argc, char** argv) {
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
     int numOfCom=200;
-    int maxMsgSize=20;
+    int maxMsgSize=262144;
     int mode=SYNCHRONISED_MODE;
 
     double start=0;
@@ -33,7 +34,9 @@ int main(int argc, char** argv) {
 
     char msgBuf[maxMsgSize];
 
+    int buffsize;
     if(mode==BUFFERED_MODE) {
+        buffsize = BUFFSIZE;
         MPI_Buffer_attach(buffer,BUFFSIZE);
     }
 
@@ -45,7 +48,7 @@ int main(int argc, char** argv) {
         msgBuf[i]=i;
     }
     if (world_rank == 0) {
-        for(j=1; j<maxMsgSize; j++) {
+        for(j=1; j<maxMsgSize; j*=2) {
             MPI_Barrier(MPI_COMM_WORLD);
             for(i=0; i<numOfCom; i++) {
                 if(mode==BUFFERED_MODE) {
@@ -56,7 +59,7 @@ int main(int argc, char** argv) {
             }
         }
     } else if (world_rank == 1) {
-        for(j=1; j<maxMsgSize; j++) {
+        for(j=1; j<maxMsgSize; j*=2) {
             MPI_Barrier(MPI_COMM_WORLD);
             start = MPI_Wtime();
             for(i=0; i<numOfCom; i++) {
@@ -64,8 +67,14 @@ int main(int argc, char** argv) {
             }
             end = MPI_Wtime();
             double time = end-start;
-            printf("%d,%f\n", j, (j*8*numOfCom)/(1000000 * time));
+            printf("%f\n", (j*8*numOfCom)/ time / BITS_IN_MBIT);
         }
     }
+
+    if(mode==BUFFERED_MODE) {
+        MPI_Buffer_detach(buffer, &buffsize);
+    }
+
     MPI_Finalize();
 }
+
