@@ -37,7 +37,7 @@ def ping_pong(number_of_messages):
 			receive_message(0)
 			send_message(0)	
 
-if len(sys.argv) < 2:
+if len(sys.argv) < 2 and rank == 1:
 	print 'Usage ./delay <std|sync|buff>'
 	sys.exit(1)
 
@@ -60,9 +60,10 @@ ping_pong(number_of_messages)
 end_time = MPI.Wtime()
 
 if rank == 1:
-	delay = (end_time - start_time)/number_of_messages/2 * 1000
-	print str(delay) + " ms"
+	delay = (end_time - start_time)* 1000/(number_of_messages*2)
+	print str(delay) + " [ms]"
 
 if type == 'buff':
 	MPI.Detach_buffer()
 		
+MPI.Finalize()

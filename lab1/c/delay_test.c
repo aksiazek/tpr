@@ -21,15 +21,17 @@ int main(int argc, char** argv) {
 
     int i=0;
 
-    if ( argc != 3 )
+    if ( (argc != 3) && (world_rank == 0))
     {
         printf( "usage: %s times_to_send communication_mode\nUsing defaults: %d %d\n", argv[0],numOfCom, mode );
     } else {
         numOfCom = atoi(argv[1]);
         mode = atoi(argv[2]);
     }
-
+    
+    int buffsize;
     if(mode==BUFFERED_MODE) {
+        buffsize = BUFFSIZE;
         MPI_Buffer_attach(buffer,BUFFSIZE);
     }
 
@@ -51,8 +53,8 @@ int main(int argc, char** argv) {
             MPI_Recv(&message, 1, MPI_CHAR, 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         }
         end = MPI_Wtime();
-        printf("Process 1 received message %c from process 0\n", message);
-        printf("Time elapsed: %f\n", (end - start)*1000/(numOfCom*2));
+        //printf("Process 1 received message %c from process 0\n", message);
+        printf("Time elapsed: %f\n [ms]", (end - start)*1000/(numOfCom*2));
     } else if (world_rank == 1) {
         MPI_Barrier(MPI_COMM_WORLD);
 
@@ -65,5 +67,10 @@ int main(int argc, char** argv) {
             }
         }
     }
+    
+    if(mode==BUFFERED_MODE) {
+        MPI_Buffer_detach(buffer, &buffsize);
+    }
+    
     MPI_Finalize();
 }
