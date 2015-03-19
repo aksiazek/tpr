@@ -1,0 +1,24 @@
+#!/bin/sh
+#PBS -q plgrid
+#PBS -l walltime=0:01:00
+#PBS -l nodes=1:ppn=12
+
+cd /tmp
+mkdir -p $USER/tpr
+
+cd $USER/tpr
+mkdir wyniki
+module load libs/boost/1.52.0
+module load libs/openblas/0.2.6
+pip install --user mpi4py
+mpicc -o delay_test /people/plgaksiazek/tpr/lab1/c/delay_test.c
+mpicc -o through_test /people/plgaksiazek/tpr/lab1/c/through_test.c
+
+mpiexec -n 2 ./through_test > wyniki/through_c_sync
+mpiexec -n 2 ./delay_test > wyniki/delay_c_sync
+mpiexec -n 2 ./through_test 200 262144 1 > wyniki/through_c_buff
+mpiexec -n 2 ./delay_test 2000 1 > wyniki/delay_c_buff
+mpiexec -n 2 python $HOME/tpr/lab1/capacity.py buff 200 > wyniki/through_py_buff
+mpiexec -n 2 python $HOME/tpr/lab1/delay_2.py buff  > wyniki/delay_py_buff
+mpiexec -n 2 python $HOME/tpr/lab1/capacity.py sync 200 > wyniki/through_py_sync
+mpiexec -n 2 python $HOME/tpr/lab1/delay_2.py sync  > wyniki/delay_py_sync
