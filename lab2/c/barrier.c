@@ -1,6 +1,5 @@
 #include <mpi.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
 
 void computations() {
@@ -39,7 +38,7 @@ int main(int argc, char** argv) {
 	double elapsed_no_barrier = end - start;
 	
 	if (world_rank == 0)
-		fprintf(stderr, "Barrier: %lf [s], no barrier: %lf [s]\n", elapsed_barrier, elapsed_no_barrier);
+		fprintf(stdout, "Barrier: %lf [s], no barrier: %lf [s]\n", elapsed_barrier, elapsed_no_barrier);
 
 	MPI_Finalize();
 	return 0;
