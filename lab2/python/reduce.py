@@ -27,11 +27,10 @@ end_time = MPI.Wtime()
 
 multi_time = end_time - start_time
 
-comm.Barrier()
-
 start_time = MPI.Wtime()
 
 for _ in xrange(0, number_of_messages):
+    comm.Barrier()
     if rank == 0:
         sum = number
         for source in xrange(1, size):

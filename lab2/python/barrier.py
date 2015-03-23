@@ -15,7 +15,7 @@ number_of_messages = 2000
 def computations():
     x = 123456789
     for i in range(100):
-        x = tan(exp(log(x)))
+        x = x * x % 23456789
 
 
 comm.Barrier()
