@@ -1,5 +1,3 @@
-size=$1
-name="c-results/group-$size"
-echo $name
-gnuplot -e "data='$name.dat'; out='$name.png'" plot.gpl
-
+for name in 'results-own-bcast' 'results-bcast' 'results-own-reduce' 'results-reduce'; do
+    gnuplot -e "data='c-results/$name.dat'; out='c-results/$name.png'" plot.gpl
+done

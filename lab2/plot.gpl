@@ -1,10 +1,10 @@
 set size square
  
 set logscale x
-set xlabel "message length [B]"
-set ylabel "throughput [MB/s]"
+set xlabel "nodes"
+set ylabel "throughput [B/s]"
   
 set terminal png 
 set output out
-plot data using 1:2 with lines title "Bcast", data using 1:3 with lines title "Gather", data using 1:4 with lines title "P2P"
+plot data using 1:2 title data
 
