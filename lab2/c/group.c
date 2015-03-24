@@ -13,8 +13,8 @@ void run(int world_rank, int world_size, int test_num) {
         int* recv_buf = NULL; 
         int sum = 0;
 
-	if (world_rank == 0)
-		fprintf(stdout, "world_size = %i, test_num = %i\n", world_size, test_num);
+	//if (world_rank == 0)
+	//	fprintf(stdout, "world_size = %i, test_num = %i\n", world_size, test_num);
 
 	for (int i = 0; i < repeats; i++) {
 		switch (test_num) {
@@ -72,7 +72,7 @@ void run(int world_rank, int world_size, int test_num) {
 	double total_time = end - start;
 
 	if (world_rank == 0) {
-		printf("%lf [B/s]\n", total_size / total_time);
+		printf("%lf\n", total_size / total_time);
 	}
 }
 

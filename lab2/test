@@ -1,0 +1,8 @@
+#!/bin/bash
+
+for i in 3 5 10; do
+	./run.sh $i ./c/group > c-results/group-$i.dat
+	#./plot.sh $i
+done
+
+#scp c-results/*.png aksiazek@student.agh.edu.pl:~/public_html/tpr/lab02
