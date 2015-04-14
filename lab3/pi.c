@@ -59,20 +59,23 @@ int main(int argc, char** argv) {
         
         mpz_t all_points;
         mpz_init(all_points);
+        mpz_t all_points_seq;
+        mpz_init(all_points_seq);
         mpz_set_str(all_points, argv[1], 10);
+        mpz_set_str(all_points_seq, argv[1], 10);
+        
         gmp_randinit_mt(RNG_state);
         
 	MPI_Init(&argc, &argv);	
 	MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+	mpz_mul_ui(all_points_seq, all_points_seq, world_size);
 	        
 	unsigned int seed = time(NULL) + world_rank;
         gmp_randseed_ui(RNG_state, seed);
         
-        double start, end, t_p, t_s;
-        
         MPI_Barrier(MPI_COMM_WORLD);
-	start = MPI_Wtime();
+	double start = MPI_Wtime();
 
 	double local_pi = monte_carlo_pi(RNG_state, all_points);
 	double global_pi_sum;
@@ -80,15 +83,19 @@ int main(int argc, char** argv) {
 	MPI_Reduce(&local_pi, &global_pi_sum, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 	
 	MPI_Barrier(MPI_COMM_WORLD);
-	end = MPI_Wtime();
-	t_p = end - start;
+	double end = MPI_Wtime();
+	double t_p = end - start;
         
-        for (int i = 0; i < world_rank; i++)
-		monte_carlo_pi(RNG_state, all_points);
+        
+        if (world_rank == 0) {
+                start = MPI_Wtime();
 
-	MPI_Barrier(MPI_COMM_WORLD);
-	end = MPI_Wtime();
-	t_s = end - start;
+	        monte_carlo_pi(RNG_state, all_points_seq);
+	                
+	        end = MPI_Wtime();
+	}
+
+	double t_s = end - start;
 
 	double speedup = t_s / t_p;
 	double efficiency = speedup / world_size;
@@ -101,11 +108,13 @@ int main(int argc, char** argv) {
 		fprintf(stderr, "t_s = %lf sec, t_p = %lf sec, ", t_s, t_p);
 		fprintf(stderr, "speedup = %lf, efficiency = %lf, karp_flatt = %lf\n", 
 		        speedup, efficiency, karp_flatt);
-		        
-		fprintf(stdout, "%i %lf %lf %lf\n", world_size, speedup, efficiency, karp_flatt);
+		
+		fprintf(stdout, "%i %lf %lf %lf %lf\n", world_size, 
+		        t_p/world_size, speedup, efficiency, karp_flatt);
 	}
         
         mpz_clear(all_points);
+        mpz_clear(all_points_seq);
         gmp_randclear(RNG_state);
 	MPI_Finalize();
 	return 0;

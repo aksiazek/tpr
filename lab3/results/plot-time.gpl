@@ -1,0 +1,10 @@
+set size square
+ 
+#set logscale xy
+set xlabel "number of processes"
+set ylabel "parallel time per process"
+  
+set terminal png 
+set output out
+plot data using 1:2 with lines
+
