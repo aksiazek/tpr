@@ -70,10 +70,8 @@ int main(int argc, char** argv) {
 	MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 	
-	if(atoi(argv[2]) == 1) {
+	if(atoi(argv[2]) == 0) {
 	        mpz_fdiv_q_ui(all_points, all_points, world_size);
-	} else {
-	        mpz_mul_ui(all_points_seq, all_points_seq, world_size);
 	}
 	        
 	unsigned int seed = time(NULL) + world_rank;
@@ -101,8 +99,14 @@ int main(int argc, char** argv) {
 	}
 
 	double t_s = end - start;
-
-	double speedup = t_s / t_p;
+        double speedup;
+        if(atoi(argv[2]) == 0) {
+	        speedup = t_s / t_p;
+	} else {
+	
+	        speedup = world_size* t_s / t_p;
+	}
+	
 	double efficiency = speedup / world_size;
 	double karp_flatt = (1. / speedup - 1. / world_size) / (1. - 1. / world_size);
 
