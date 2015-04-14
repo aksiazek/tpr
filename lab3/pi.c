@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
         int world_rank, world_size;
         gmp_randstate_t RNG_state;
         
-        if (argc != 2) {
+        if (argc != 3) {
 		fprintf(stderr, "Usage: %s <points-per-processor>\n", argv[0]);
 		exit(1);
 	}
@@ -69,7 +69,12 @@ int main(int argc, char** argv) {
 	MPI_Init(&argc, &argv);	
 	MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-	mpz_mul_ui(all_points_seq, all_points_seq, world_size);
+	
+	if(atoi(argv[2]) == 1) {
+	        mpz_fdiv_q_ui(all_points, all_points, world_size);
+	} else {
+	        mpz_mul_ui(all_points_seq, all_points_seq, world_size);
+	}
 	        
 	unsigned int seed = time(NULL) + world_rank;
         gmp_randseed_ui(RNG_state, seed);
@@ -103,7 +108,7 @@ int main(int argc, char** argv) {
 
         
         if (world_rank == 0) {
-		fprintf(stderr, "world_size = %i, all_points = %lu, ", world_size, mpz_get_ui(all_points));
+		fprintf(stderr, "world_size = %i, all_points = %lu, ", world_size, mpz_get_ui(all_points_seq));
 		fprintf(stderr, "pi = %lf, ", global_pi_sum / world_size);
 		fprintf(stderr, "t_s = %lf sec, t_p = %lf sec, ", t_s, t_p);
 		fprintf(stderr, "speedup = %lf, efficiency = %lf, karp_flatt = %lf\n", 
