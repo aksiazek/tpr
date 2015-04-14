@@ -1,0 +1,16 @@
+#!/bin/sh
+#PBS -q plgrid-testing
+#PBS -l walltime=0:01:00
+#PBS -l nodes=1:ppn=12
+
+cd /tmp
+mkdir -p $USER/tpr
+
+cd $USER/tpr
+mkdir wyniki
+module load libs/boost/1.52.0
+module load libs/gmp/5.1.2
+
+cp -r $USER
+
+
