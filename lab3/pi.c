@@ -9,8 +9,13 @@ double monte_carlo_pi(gmp_randstate_t RNG_state, mpz_t all_points) {
         mpz_t in_circle_hits, i, one;
         mpf_t x, y, R, R_squared, result;
         
-        mpz_inits(in_circle_hits, one, NULL);
-        mpf_inits(x, y, R, R_squared, result, NULL);
+        mpz_init(in_circle_hits);
+        mpz_init(one);
+        mpf_init(x);
+        mpf_init(y);
+        mpf_init(R);
+        mpf_init(R_squared);
+        mpf_init(result);
         mpz_set_ui(one, 1);
         mpf_set_d (R_squared, 0.25);
         mpf_set_d (R, 0.5);
@@ -32,8 +37,14 @@ double monte_carlo_pi(gmp_randstate_t RNG_state, mpz_t all_points) {
 	mpf_div(result, x, y);
 	double pi_4 = mpf_get_d(result);
 	
-        mpz_clears(i, in_circle_hits, one, NULL);
-        mpf_clears(x, y, R, R_squared, result, NULL);
+        mpz_clear(i);
+        mpz_clear(in_circle_hits);
+        mpz_clear(one);
+        mpf_clear(x);
+        mpf_clear(y);
+        mpf_clear(R);
+        mpf_clear(R_squared);
+        mpf_clear(result);
 	return 4 * pi_4;
 }
 
