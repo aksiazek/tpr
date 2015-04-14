@@ -101,10 +101,10 @@ int main(int argc, char** argv) {
 		fprintf(stderr, "t_s = %lf sec, t_p = %lf sec, ", t_s, t_p);
 		fprintf(stderr, "speedup = %lf, efficiency = %lf, karp_flatt = %lf\n", 
 		        speedup, efficiency, karp_flatt);
-
+		        
+		fprintf(stdout, "%i %lf\n", world_size, speedup);
+		fprintf(stdout, "%i %lf %lf\n", world_size, efficiency, karp_flatt);
 	}
-        
-        
         
         mpz_clear(all_points);
         gmp_randclear(RNG_state);
