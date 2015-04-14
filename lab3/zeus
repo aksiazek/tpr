@@ -3,12 +3,13 @@
 #PBS -l walltime=0:01:00
 #PBS -l nodes=1:ppn=12
 
-mkdir -p /tmp/$USER/tpr/wyniki
+mkdir -p /tmp/$USER/tpr
 
 cd /tmp/$USER/tpr
-module load libs/boost/1.52.0
+module load tools/openmpi/1.6.3-gnu-4.1.2-ib
 module load libs/gmp/5.1.2
 
 cp -r ~/tpr/lab3/ .
+cd lab3
 make
 mpiexec -n 12 ./pi 100000000 > wyniki
