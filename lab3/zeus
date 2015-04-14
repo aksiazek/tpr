@@ -1,7 +1,8 @@
 #!/bin/sh
 #PBS -q plgrid-testing
-#PBS -l walltime=0:01:00
-#PBS -l nodes=1:ppn=12
+#PBS -l walltime=0:30:00
+#PBS -l nodes=5:ppn=12
+#PBS -A plgaksiazek2015a
 
 mkdir -p /tmp/$USER/tpr
 
@@ -12,4 +13,4 @@ module load libs/gmp/5.1.2
 cp -r ~/tpr/lab3/ .
 cd lab3
 make
-mpiexec -n 12 ./pi 100000000 > wyniki
+./run.sh

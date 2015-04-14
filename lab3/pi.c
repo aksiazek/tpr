@@ -102,8 +102,7 @@ int main(int argc, char** argv) {
 		fprintf(stderr, "speedup = %lf, efficiency = %lf, karp_flatt = %lf\n", 
 		        speedup, efficiency, karp_flatt);
 		        
-		fprintf(stdout, "%i %lf\n", world_size, speedup);
-		fprintf(stdout, "%i %lf %lf\n", world_size, efficiency, karp_flatt);
+		fprintf(stdout, "%i %lf %lf %lf\n", world_size, speedup, efficiency, karp_flatt);
 	}
         
         mpz_clear(all_points);
