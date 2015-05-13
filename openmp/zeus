@@ -1,0 +1,13 @@
+#!/bin/sh
+#PBS -q plgrid-testing
+#PBS -l walltime=0:30:00
+#PBS -l nodes=1:ppn=12
+#PBS -A plgaksiazek2015a
+
+mkdir -p /tmp/$USER/tpr
+cd /tmp/$USER/tpr
+cp -r ~/tpr/openmp/ .
+cd openmp
+make
+./run.sh
+cp -r results/ ~/tpr/openmp/
