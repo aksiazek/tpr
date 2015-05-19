@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "helper_timer.h"
 
-__global__ void add (int *a, int *b, int *c) {
+__global__ void add (int *a, int *b, int *c, int N) {
     int tid = blockIdx.x * blockDim.x + threadIdx.x;
     if(tid < N) {
         c[tid] = a[tid]+b[tid];
@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
     sdkResetTimer(&timer);
     sdkStartTimer(&timer);
     
-    add <<<B,N>>> (dev_a,dev_b,dev_c);
+    add <<<B,N>>> (dev_a,dev_b,dev_c, N);
     
     cudaThreadSynchronize();
     sdkStopTimer(&timer);
