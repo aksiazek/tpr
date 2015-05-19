@@ -10,7 +10,7 @@ __global__ void add (int *a, int *b, int *c, int N) {
     }
 }
 
-void add(int *a, int *b, int *c, int N) {
+void add_cpu(int *a, int *b, int *c, int N) {
 
     for (int i = 0; i < N; i++) {
         c[i] = a[i] + b[i];
@@ -24,7 +24,7 @@ void check (int* cpu_c, int* gpu_c, int N) {
 
     int flag = 0;
     for (int i = 0; i < N; i++) {
-        if(c[i] != cpu_c[i]) {
+        if(gpu_c[i] != cpu_c[i]) {
             printf("Not Equal!");
             flag = 1;
             break;
@@ -83,13 +83,12 @@ int main(int argc, char* argv[]) {
     
     printf ("Time for the kernel: %f ms\n", time);
     
-    add(cpu_a, cpu_b, cpu_c, N);
+    add_cpu(cpu_a, cpu_b, cpu_c, N);
     for (int i = 0; i < N; i++) {
         printf("%d+%d=%d\n", cpu_a[i], cpu_b[i], cpu_c[i]);
     }
     
-    
-    check(cpu_c, gpu_c, N);
+    check(cpu_c, c, N);
     
     return 0;
 }
