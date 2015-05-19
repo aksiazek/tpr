@@ -30,13 +30,13 @@ void check (int* cpu_c, int* gpu_c, int N) {
     int flag = 0;
     for (int i = 0; i < N; i++) {
         if(gpu_c[i] != cpu_c[i]) {
-            printf("Not Equal!");
+            printf("Not Equal!\n");
             flag = 1;
             break;
         }
     }
     if(!flag) {
-        printf("Equal!");
+        printf("Equal!\n");
     }
 }
 
@@ -85,18 +85,19 @@ int main(int argc, char* argv[]) {
     cudaFree(dev_b);
     cudaFree(dev_c);
     
-    for (int i = 0; i < N; i++) {
+    /*for (int i = 0; i < N; i++) {
         printf("%d+%d=%d\n", a[i], b[i], c[i]);
-    }
+    }*/
     
     printf ("Time for the kernel: %f ms\n", time);
     
     add_cpu(cpu_a, cpu_b, cpu_c, N);
-    for (int i = 0; i < N; i++) {
-        printf("%d+%d=%d\n", cpu_a[i], cpu_b[i], cpu_c[i]);
-    }
-    
     check(cpu_c, c, N);
+    /*for (int i = 0; i < N; i++) {
+        printf("%d+%d=%d\n", cpu_a[i], cpu_b[i], cpu_c[i]);
+    }*/
+    
+    
     
     return 0;
 }
