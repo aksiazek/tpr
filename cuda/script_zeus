@@ -5,4 +5,4 @@
 #PBS -l walltime=00:01:00
 module add gpu/cuda
 cd $PBS_O_WORKDIR
-$PBS_O_WORKDIR/program_name > out
+$PBS_O_WORKDIR/program_name 1 10 > out
