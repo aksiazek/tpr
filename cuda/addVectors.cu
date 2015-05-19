@@ -1,7 +1,7 @@
 #include <cuda.h>
 #include <stdlib.h>
 #include <stdio.h>
-#define N 10
+#include "helper_timer.h"
 
 __global__ void add (int *a, int *b, int *c) {
     int tid = blockIdx.x * blockDim.x + threadIdx.x;
@@ -9,7 +9,16 @@ __global__ void add (int *a, int *b, int *c) {
         c[tid] = a[tid]+b[tid];
     }
 }
-int main(void) {
+int main(int argc, char* argv[]) {
+
+    if(argc != 3) {
+        printf("Usage: %s [liczba-blocków] [wątki-na-block]", argv[0]);
+        exit(-1);
+    }
+
+    unsigned B = atoi(argv[1]);
+    int N = atoi(argv[2]);
+
     int a[N],b[N],c[N];
     // float a_h[N];
     int *dev_a, *dev_b, *dev_c;//, *a_d;
@@ -33,7 +42,7 @@ int main(void) {
     sdkResetTimer(&timer);
     sdkStartTimer(&timer);
     
-    add <<<1,N>>> (dev_a,dev_b,dev_c);
+    add <<<B,N>>> (dev_a,dev_b,dev_c);
     
     cudaThreadSynchronize();
     sdkStopTimer(&timer);
