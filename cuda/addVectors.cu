@@ -42,13 +42,14 @@ void check (int* cpu_c, int* gpu_c, int N) {
 
 int main(int argc, char* argv[]) {
 
-    if(argc != 3) {
-        printf("Usage: %s [liczba-blocków] [wątki-na-block]", argv[0]);
+    if(argc != 4) {
+        printf("Usage: %s [liczba-blocków] [wątki-na-block] [rozmiar-tablicy]", argv[0]);
         exit(-1);
     }
 
-    unsigned B = atoi(argv[1]);
-    int N = atoi(argv[2]);
+    unsigned Blocks = atoi(argv[1]);
+    unsigned Threads = atoi(argv[2]);
+    unsigned N = atoi(argv[3]);
 
     int a[N],b[N],c[N];
     int cpu_a[N], cpu_b[N], cpu_c[N];
@@ -70,7 +71,7 @@ int main(int argc, char* argv[]) {
     sdkResetTimer(&timer);
     sdkStartTimer(&timer);
     
-    add <<<B,N>>> (dev_a,dev_b,dev_c, N);
+    add <<<Blocks,Threads>>> (dev_a,dev_b,dev_c, N);
     
     cudaThreadSynchronize();
     sdkStopTimer(&timer);
