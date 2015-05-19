@@ -22,7 +22,7 @@ void add_cpu(int *a, int *b, int *c, int N) {
     gettimeofday(&tval_after, NULL);
     timersub(&tval_after, &tval_before, &tval_result);
     
-    printf("Time or the CPU: %ld.%06ld\n", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
+    printf("Time or the CPU: %ld.%06ld ms\n", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
 }
 
 void check (int* cpu_c, int* gpu_c, int N) {
@@ -61,6 +61,8 @@ int main(int argc, char* argv[]) {
     for (int i=0; i<N; i++) {
         a[i] = i;
         b[i] = i*2;
+        cpu_a[i] = i;
+        cpu_b[i] = i*2;
     }
     cudaMemcpy(dev_a, a, N*sizeof(int), cudaMemcpyHostToDevice);
     cudaMemcpy(dev_b, b, N*sizeof(int), cudaMemcpyHostToDevice);
