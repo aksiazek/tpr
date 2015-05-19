@@ -1,6 +1,7 @@
 #include <cuda.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/time.h>
 #include "helper_timer.h"
 
 __global__ void add (int *a, int *b, int *c, int N) {
@@ -11,13 +12,17 @@ __global__ void add (int *a, int *b, int *c, int N) {
 }
 
 void add_cpu(int *a, int *b, int *c, int N) {
+    struct timeval tval_before, tval_after, tval_result;
+    gettimeofday(&tval_before, NULL);
 
     for (int i = 0; i < N; i++) {
         c[i] = a[i] + b[i];
     }
+
+    gettimeofday(&tval_after, NULL);
+    timersub(&tval_after, &tval_before, &tval_result);
     
-    float time = 0.0f;
-    printf ("Time for the CPU: %f ms\n", time);
+    printf("Time or the CPU: %ld.%06ld\n", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
 }
 
 void check (int* cpu_c, int* gpu_c, int N) {
