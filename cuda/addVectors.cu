@@ -1,5 +1,6 @@
 #include <cuda.h>
 #include <stdlib.h>
+#include <stdio.h>
 #define N 10
 
 __global__ void add (int *a, int *b, int *c) {
