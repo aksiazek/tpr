@@ -4,6 +4,16 @@
 #include <sys/time.h>
 #include "helper_timer.h"
 
+#define cudaCheckError(err) __cudaCheckError(err, __FILE__, __LINE__ )
+
+inline void __cudaCheckError(cudaError err, const char *file, const int line) {
+    if (cudaSuccess != err) {
+        fprintf(stderr, "%s at (%s:%i)\n",
+                 cudaGetErrorString(err), file, line);
+        exit(-1);
+    }
+}
+
 __global__ void add (int *a, int *b, int *c, int N) {
     int tid = blockIdx.x * blockDim.x + threadIdx.x;
     if(tid < N) {
@@ -22,7 +32,7 @@ void add_cpu(int *a, int *b, int *c, int N) {
     gettimeofday(&tval_after, NULL);
     timersub(&tval_after, &tval_before, &tval_result);
     
-    printf("Time or the CPU: %ld.%06ld ms\n", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
+    printf("Time or the CPU: %ld.%06ld s\n", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
 }
 
 void check (int* cpu_c, int* gpu_c, int N) {
@@ -43,7 +53,7 @@ void check (int* cpu_c, int* gpu_c, int N) {
 int main(int argc, char* argv[]) {
 
     if(argc != 4) {
-        printf("Usage: %s [liczba-blocków] [wątki-na-block] [rozmiar-tablicy]", argv[0]);
+        printf("Usage: %s [liczba-blocków] [wątki-na-block] [rozmiar-tablicy]\n", argv[0]);
         exit(-1);
     }
 
@@ -64,9 +74,9 @@ int main(int argc, char* argv[]) {
         cpu_a[i] = i;
         cpu_b[i] = i*2;
     }
-    cudaMemcpy(dev_a, a, N*sizeof(int), cudaMemcpyHostToDevice);
-    cudaMemcpy(dev_b, b, N*sizeof(int), cudaMemcpyHostToDevice);
-    cudaMemcpy(dev_c, c, N*sizeof(int), cudaMemcpyHostToDevice);
+    cudaCheckError(cudaMemcpy(dev_a, a, N*sizeof(int), cudaMemcpyHostToDevice));
+    cudaCheckError(cudaMemcpy(dev_b, b, N*sizeof(int), cudaMemcpyHostToDevice));
+    cudaCheckError(cudaMemcpy(dev_c, c, N*sizeof(int), cudaMemcpyHostToDevice));
     
     StopWatchInterface *timer=NULL;
     sdkCreateTimer(&timer);
@@ -74,22 +84,21 @@ int main(int argc, char* argv[]) {
     sdkStartTimer(&timer);
     
     add <<<Blocks,Threads>>> (dev_a,dev_b,dev_c, N);
-    
-    cudaThreadSynchronize();
+    cudaCheckError(cudaPeekAtLastError());
+    cudaCheckError(cudaThreadSynchronize());
     sdkStopTimer(&timer);
     float time = sdkGetTimerValue(&timer);
     sdkDeleteTimer(&timer);
     
-    cudaMemcpy(c, dev_c, N*sizeof(int), cudaMemcpyDeviceToHost);
+    cudaCheckError(cudaMemcpy(c, dev_c, N*sizeof(int), cudaMemcpyDeviceToHost));
+    /*for (int i = 0; i < N; i++) {
+        printf("%d+%d=%d\n", a[i], b[i], c[i]);
+    }*/
     cudaFree(dev_a);
     cudaFree(dev_b);
     cudaFree(dev_c);
     
-    /*for (int i = 0; i < N; i++) {
-        printf("%d+%d=%d\n", a[i], b[i], c[i]);
-    }*/
-    
-    printf ("Time for the kernel: %f ms\n", time);
+    printf ("Time for the kernel: %f s\n", time/1000);
     
     add_cpu(cpu_a, cpu_b, cpu_c, N);
     check(cpu_c, c, N);
