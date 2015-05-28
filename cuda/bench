@@ -1,0 +1,8 @@
+#!/bin/bash
+for i in 64 128 256 512 1024; do
+        j=102400
+        while [ $j -le 10240000 ]; do
+                optirun ./addVectors $(($j / $i)) $i $j;
+                j=$(($j*10))
+        done
+done

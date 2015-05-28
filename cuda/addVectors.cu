@@ -21,7 +21,7 @@ __global__ void add (int *a, int *b, int *c, int N) {
     }
 }
 
-void add_cpu(int *a, int *b, int *c, int N) {
+void add_cpu(int *a, int *b, int *c, int N, unsigned Blocks, unsigned Threads, FILE * pFile, float time) {
     struct timeval tval_before, tval_after, tval_result;
     gettimeofday(&tval_before, NULL);
 
@@ -32,7 +32,7 @@ void add_cpu(int *a, int *b, int *c, int N) {
     gettimeofday(&tval_after, NULL);
     timersub(&tval_after, &tval_before, &tval_result);
     
-    printf("Time or the CPU: %ld.%06ld s\n", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
+    fprintf(pFile, "%u %u %u %f %ld.%06ld\n", Blocks, Threads, N, time, (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
 }
 
 void check (int* cpu_c, int* gpu_c, int N) {
@@ -52,6 +52,8 @@ void check (int* cpu_c, int* gpu_c, int N) {
 
 int main(int argc, char* argv[]) {
 
+    FILE * gFile = fopen("results", "a");
+
     if(argc != 4) {
         printf("Usage: %s [liczba-blocków] [wątki-na-block] [rozmiar-tablicy]\n", argv[0]);
         exit(-1);
@@ -61,8 +63,12 @@ int main(int argc, char* argv[]) {
     unsigned Threads = atoi(argv[2]);
     unsigned N = atoi(argv[3]);
 
-    int a[N],b[N],c[N];
-    int cpu_a[N], cpu_b[N], cpu_c[N];
+    int* a = (int*) malloc(N * sizeof(int));
+    int* b = (int*) malloc(N * sizeof(int));
+    int* c = (int*) malloc(N * sizeof(int));
+    int* cpu_a = (int*) malloc(N * sizeof(int));
+    int* cpu_b = (int*) malloc(N * sizeof(int));
+    int* cpu_c = (int*) malloc(N * sizeof(int));
     int *dev_a, *dev_b, *dev_c;//, *a_d;
     cudaMalloc((void**)&dev_a, N * sizeof(int));
     cudaMalloc((void**)&dev_b, N * sizeof(int));
@@ -98,15 +104,19 @@ int main(int argc, char* argv[]) {
     cudaFree(dev_b);
     cudaFree(dev_c);
     
-    printf ("Time for the kernel: %f s\n", time/1000);
-    
-    add_cpu(cpu_a, cpu_b, cpu_c, N);
-    check(cpu_c, c, N);
+    add_cpu(cpu_a, cpu_b, cpu_c, N, Blocks, Threads, gFile, time/1000);
+    //check(cpu_c, c, N);
     /*for (int i = 0; i < N; i++) {
         printf("%d+%d=%d\n", cpu_a[i], cpu_b[i], cpu_c[i]);
     }*/
     
-    
+    fclose (gFile);
+    free(a);
+    free(b);
+    free(c);
+    free(cpu_a);
+    free(cpu_b);
+    free(cpu_c);
     
     return 0;
 }
