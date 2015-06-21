@@ -57,8 +57,8 @@ public class WordCountTest {
                 .withMapper(new WordCount.Map())
                 .withInput(new LongWritable(0), new Text("foo bar foo bar foo"))
                 .withReducer(new WordCount.Reduce())
-                .withOutput(new Text("bar"), new IntWritable(2))
                 .withOutput(new Text("foo"), new IntWritable(3))
+                .withOutput(new Text("bar"), new IntWritable(2))
                 .runTest();
     }
 }

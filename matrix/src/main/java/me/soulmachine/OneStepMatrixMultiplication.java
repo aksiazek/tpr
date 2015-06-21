@@ -69,9 +69,9 @@ public class OneStepMatrixMultiplication {
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
         // A is an m-by-n matrix; B is an n-by-p matrix.
-        conf.set("m", "2");
-        conf.set("n", "5");
-        conf.set("p", "3");
+        conf.set("m", "50");
+        conf.set("n", "100");
+        conf.set("p", "50");
 
         Job job = new Job(conf, "MatrixMatrixMultiplicationOneStep");
         job.setJarByClass(OneStepMatrixMultiplication.class);

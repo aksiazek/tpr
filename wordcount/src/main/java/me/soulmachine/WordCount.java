@@ -1,7 +1,11 @@
 package me.soulmachine;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Pattern;
+
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
@@ -9,12 +13,12 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.mapreduce.Reducer.Context;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-
 import org.apache.log4j.Logger;
 
 public class WordCount extends Configured implements Tool {
@@ -33,6 +37,7 @@ public class WordCount extends Configured implements Tool {
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
         job.setMapperClass(Map.class);
+        job.setCombinerClass(Reduce.class);
         job.setReducerClass(Reduce.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
@@ -58,16 +63,35 @@ public class WordCount extends Configured implements Tool {
             }
         }
     }
+    
+    static List<WordBest> top20 = Collections.synchronizedList(new ArrayList<WordBest>());
 
     public static class Reduce extends Reducer<Text, IntWritable, Text, IntWritable> {
+    	
         @Override
         public void reduce(Text word, Iterable<IntWritable> counts, Context context)
                 throws IOException, InterruptedException {
+        	
             int sum = 0;
             for (IntWritable count : counts) {
                 sum += count.get();
             }
-            context.write(word, new IntWritable(sum));
+            
+            WordBest maybe = new WordBest(new Text(word.toString()), sum);
+	        top20.add(maybe);
         }
+        
+        @Override
+    	protected void cleanup(Context context) throws IOException, InterruptedException {
+    		// TODO: emit the found maximum 20
+        	Collections.sort(top20);
+        	int count = 0;
+        	for(WordBest top: top20) {
+        		context.write(top.word, new IntWritable(top.count));
+        		count++;
+        		if(count == 20)
+        			return;
+        	}
+    	}
     }
 }

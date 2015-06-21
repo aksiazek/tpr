@@ -1,0 +1,14 @@
+set size square
+set key left top
+set xlabel "rozmiar danych (płytki kwadratowej NxN)"
+set ylabel "czas [s]"
+
+
+plot "cpu.dat" using 1:2 title "CPU" with lines, \
+     "shared.dat" using 1:2 title "Pamięć współdzielona" with lines, \
+     "global.dat" using 1:2 title "Pamięć globalna" with lines, \
+     "texture.dat" using 1:2 title "Pamięć tekstury" with lines
+     
+pause -1
+
+

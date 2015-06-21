@@ -1,0 +1,9 @@
+set size square
+ 
+set xlabel "rozmiar danych"
+set ylabel "czas [s]"
+  
+
+plot data i 0 using 3:4 with lines title "GPU time [64]", data i 1 using 3:4 with lines title "GPU time [128]", data i 2 using 3:4 with lines title "GPU time [256]", data i 3 using 3:4 with lines title "GPU time [512]", data i 4 using 3:4 with lines title "GPU time [1024]"
+
+pause -1

@@ -1,0 +1,22 @@
+#!/bin/bash
+for way in cpu global shared texture; do
+    rm $way.dat
+done
+
+for size in $(seq 4 10); do
+    for way in global shared texture; do
+        echo "optirun ./laplace $((2**$size)) $way >> $way.dat"
+        optirun ./laplace $((2**$size)) $way >> $way.dat
+    done
+done
+
+for size in 4 5 6; do
+    echo "./laplace $((2**$size)) cpu >> cpu.dat"
+    ./laplace $((2**$size)) cpu >> cpu.dat
+done
+
+echo "CPU heavy"
+./laplace $((2**7)) cpu >> cpu.dat &
+./laplace $((2**8)) cpu >> cpu.dat &
+./laplace $((2**9)) cpu >> cpu.dat &
+./laplace $((2**10)) cpu >> cpu.dat &

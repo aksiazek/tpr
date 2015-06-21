@@ -1,0 +1,8 @@
+set size square
+ 
+set xlabel "rozmiar danych"
+set ylabel "czas [s]"
+
+plot data using 1:2 with lines title "GPU time", data using 1:3 with lines title "CPU time"
+
+pause -1

@@ -1,0 +1,2 @@
+#!/bin/bash
+gnuplot -e "data='results_zeus'; out='results_zeus.png'" plot.gpl
