@@ -2,7 +2,7 @@ set size square
  
 set logscale x
 set xlabel "nodes"
-set ylabel "throughput [B/s]"
+set ylabel "scale [B/s]"
   
 set terminal png 
 set output out

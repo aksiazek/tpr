@@ -1,11 +1,12 @@
 #!/bin/sh
-#PBS -q plgrid-testing
-#PBS -l walltime=0:30:00
+#PBS -q plgrid
+#PBS -l walltime=0:10:00
 #PBS -l nodes=1:ppn=12
-#PBS -A plgaksiazek2015a
 
+echo "TUTAJ"
 mkdir -p /tmp/$USER/tpr
 cd /tmp/$USER/tpr
+module load tools/openmpi/1.6.3-gnu-4.1.2-ib
 cp -r ~/tpr/openmp/ .
 cd openmp
 make

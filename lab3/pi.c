@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
         gmp_randstate_t RNG_state;
         
         if (argc != 3) {
-		fprintf(stderr, "Usage: %s <points-per-processor>\n", argv[0]);
+		fprintf(stderr, "Usage: %s <points-per-processor> [0|1]\n", argv[0]);
 		exit(1);
 	}
         
@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
 
 	MPI_Reduce(&local_pi, &global_pi_sum, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 	
-	MPI_Barrier(MPI_COMM_WORLD);
+	// MPI_Barrier(MPI_COMM_WORLD);
 	double end = MPI_Wtime();
 	double t_p = end - start;
         

@@ -31,3 +31,8 @@
 *.png
 *.dat
 *.gnu
+
+# IDE
+.settings
+.classpath
+.project

@@ -1,0 +1,10 @@
+set size square
+ 
+#set logscale xy
+set xlabel "number of processes"
+set ylabel "speedup"
+  
+set terminal png 
+set output out
+plot data using 2:4 with lines
+
